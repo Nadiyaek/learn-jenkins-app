@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+        /*
         stage('Build') {
             agent{
                 docker{
@@ -20,7 +21,7 @@ pipeline {
                 '''
                 
             }
-        }
+        }*/
         stage('Test'){
             agent{
                 docker{
@@ -35,6 +36,7 @@ pipeline {
                  npm test  
                  '''
             }
+        }
 
             stage('E2E'){
             agent{
@@ -48,18 +50,19 @@ pipeline {
                 //type install serve locally instead of g then copy the relative path->from node modules,bin,serve
                 sh ''' 
                  npm install serve
-                 node_modules/.bin/serve -s build 
+                 node_modules/.bin/serve -s build &
+                 sleep 10
                  npx playwright test
                  '''
             }
 
             post{
                 always{
-                    junit 'test-results/junit.xml'
+                    junit 'jest-results/junit.xml'
                 }
             }
-
-        }
+         }
+        
 
     }
 }
