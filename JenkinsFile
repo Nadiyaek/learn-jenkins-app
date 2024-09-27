@@ -36,6 +36,23 @@ pipeline {
                  '''
             }
 
+            stage('E2E'){
+            agent{
+                docker{
+                    image 'mcr.microsoft.com/playwright:v1.47.2-noble'
+                    reuseNode true
+                }
+            }
+            steps{
+                echo 'Test stage'
+                //type install serve locally instead of g then copy the relative path->from node modules,bin,serve
+                sh ''' 
+                 npm install serve
+                 node_modules/.bin/serve -s build 
+                 npx playwright test
+                 '''
+            }
+
             post{
                 always{
                     junit 'test-results/junit.xml'
